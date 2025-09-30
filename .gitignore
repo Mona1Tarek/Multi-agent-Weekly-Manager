@@ -1,0 +1,15 @@
+# Ignore virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VSCode settings
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# System files
+.DS_Store

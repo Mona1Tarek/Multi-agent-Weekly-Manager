@@ -1,0 +1,179 @@
+Title: 	Agentic AI Weekly Management System
+	Agentic AI Weekly Manager
+	Multi-agent AI Weekly Manager
+
+
+
+
+Tasks:  Task Orchestrator → Agent decides which one to call based on your query
+	Email Drafting Agent 
+	Calendar Agent → books meetings
+	Timetable Agent → organizes your week
+	Summarizer Agent → shortens documents
+	Reminder Agent 
+	Reporting Agent
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Medium level (context sharing)
+
+Agents share results with each other via the orchestrator.
+
+
+Example:
+Summarizer Agent finishes → output goes to Reporting Agent.
+Calendar Agent updates a meeting → Reminder Agent automatically gets notified.
+This makes the system feel more cohesive and useful.
+
+Needs a bit more design (like a shared memory or message-passing system).
+
+
+
+
+
+Hard level (true collaboration)
+
+Agents work together in a workflow chain (like Crew AI).
+
+
+Example:
+Summarizer Agent extracts key info from a report.
+Reporting Agent formats this into a weekly digest.
+Email Draft Agent prepares a message with that digest.
+Orchestrator passes the draft to you for review.
+
+This is powerful, but more complex (requires defining flows, error handling, and dependencies).
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Money-Wise
+
+
+
+1. LLM Backend
+Groq + Llama models (free tier or very cheap) → Groq provides high-speed inference for open-weight models (like Llama-3, Mistral, Gemma), often free or with generous quotas.
+
+Other options:
+Ollama (local models) → completely free if the laptop can handle it.
+HuggingFace Inference API (free tier) → good for trying smaller models.
+LM Studio → run models locally without coding too much.
+
+
+
+2. APIs:
+Google Calendar API → free within generous limits.
+Gmail API → also free.
+
+
+
+3. Frameworks / Tools:
+LangChain, CrewAI, AutoGen → all free and open source.
+ChromaDB, SQLite → free for storing tasks/summaries.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Groq:
+
+Runs in the cloud → sending prompts to their API, they send back results.
+Very fast inference (that’s their main advantage).
+Good for heavy LLM tasks like summarization, drafting long emails, or multi-agent reasoning.
+Risk: needs internet + depend on their service.
+
+
+
+Ollama:
+
+Runs locally 
+Works offline (good for privacy or no-internet use).
+Supports quantized models (3B–7B–13B).
+Slower than Groq unless for a strong machine.
+Limited in context length + quality compared to bigger cloud models.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Task Orchestrator Agent (CrewAI):
+
+Defines roles (Email Agent, Calendar Agent, Summarizer, etc.).
+Manages the workflow: e.g., “Summarizer Agent → output → Calendar Agent → output → Reporting Agent.”
+
+
+
+
+Summarizer Agent (CrewAI role + LangChain inside):
+
+Inside this agent, using LangChain to:
+Load documents (PDF, DOCX, etc.)
+Run embeddings + vector search (ChromaDB, FAISS)
+Summarize using Groq / Ollama.
+
+
+
+
+Email Agent (CrewAI role):
+
+But when generating emails, it can call a LangChain prompt template that ensures structured output.
+
+
+
+
+Timetable Agent (CrewAI role):
+
+Could use LangChain’s date/time tools or external APIs to build the schedule.
+
+
+
+
+Calendar Agent:
+
+CrewAI role: Handles “calendar management.”
+Receives tasks from Orchestrator (e.g., schedule weekly meeting).
+Coordinates when to call APIs.
+
+LangChain inside:
+Uses Google Calendar API wrapper (LangChain has tools for APIs) to create/update events.
+Could use LangChain’s natural language parsing to extract dates/times from your query (“next Friday 5pm” → structured datetime).
+
+Flow: Orchestrator → Calendar Agent → (LangChain date parser + Calendar API).
+
+
+
+
+Reporting Agent:
+
+CrewAI role: Responsible for end-of-week / daily summary reports.
+Collects inputs from other agents (Calendar → what meetings you had, Email Agent → what drafts were made, Timetable → tasks done/pending).
+
+LangChain inside:
+Summarizes logs (using LLM summarization pipeline).
+Optionally organizes into a Markdown or PDF report.
+You could even add ChromaDB memory to store weekly history and show trends.
+
+Flow: Orchestrator → “Generate report” → Reporting Agent pulls from each agent → LangChain summarizer → output.
+
+
+
+
+Reminder Agent:
+
+CrewAI role: Keeps track of upcoming deadlines / events.
+Listens to Calendar Agent’s output.
+Sends you reminders (via email draft, notification, or even console output).
+
+LangChain inside:
+Could format reminder messages with a template (e.g., polite, concise, etc.).
+Could prioritize which reminders are urgent vs. informational.
+
+Flow: Calendar Agent shares event list → Reminder Agent checks thresholds (e.g., 1 hour before, 1 day before) → LangChain formats reminder → output.
