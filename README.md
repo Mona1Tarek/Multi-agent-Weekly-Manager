@@ -77,6 +77,7 @@ This allows you to compare the outputs from both implementations.
     ├── timetable.pdf           # CrewAI timetable
     ├── langchain_summary.pdf   # LangChain summary
     └── langchain_timetable.pdf # LangChain timetable
+```
 
 ## Contributing
 Contributions are welcome! Please open issues or submit pull requests for improvements or new features.
