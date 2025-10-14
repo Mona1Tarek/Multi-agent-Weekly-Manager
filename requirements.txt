@@ -1,0 +1,9 @@
+crewai
+python-dotenv
+fpdf2
+PyPDF2
+agentops
+langchain
+langchain-core
+langchain-community
+langchain-groq
