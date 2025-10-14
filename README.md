@@ -1,10 +1,10 @@
 # Multi-agent Weekly Manager
 
 ## Overview
-The Multi-agent Weekly Manager is an AI-powered system designed to assist with weekly management tasks using multiple specialized agents. The current implementation includes a Summarizer Agent that processes PDF documents to generate concise summaries in PDF format, and a Timetable Agent that creates detailed weekly timetables based on user-provided tasks and priorities. The system is built using CrewAI for task orchestration and leverages powerful language models such as Groq's Llama and Ollama.
+The Multi-agent Weekly Manager is an AI-powered system designed to assist with weekly management tasks using multiple specialized agents. The current implementation includes a Summarizer Agent that processes PDF documents to generate concise summaries in PDF format using both CrewAI and LangChain, and a Timetable Agent that creates detailed weekly timetables based on user-provided tasks and priorities. The system is built using CrewAI for task orchestration and leverages powerful language models such as Groq's Llama and Ollama.
 
 ## Features
-- **Summarizer Agent**: Summarizes lengthy PDF documents into clear, concise summaries saved as PDF files.
+- **Summarizer Agent**: Summarizes lengthy PDF documents into clear, concise summaries saved as PDF files using CrewAI and LangChain implementations.
 - **Timetable Agent**: Creates detailed weekly timetables based on user-provided tasks and priorities, saved as PDF files.
 - Planned Agents:
   - Email Drafting Agent: Drafts emails based on summarized content.
@@ -39,13 +39,18 @@ AGENTOPS_API_KEY=your_agentops_api_key_here
 1. Place the PDF documents you want to summarize in the `input/` directory.
 2. Modify the `schedule_text` variable in `main.ipynb` to specify your tasks and priorities for the timetable (e.g., "- Task 1: Complete project report (High Priority, 2 hours)").
 3. Run the `main.ipynb` notebook to execute the summarization and timetable agents.
-4. The summary PDF will be saved in the `output/` directory as `summary.pdf`.
+4. The summary PDF (CrewAI-based) will be saved in the `output/` directory as `summary.pdf`.
 5. The timetable PDF will be saved in the `output/` directory as `timetable.pdf`.
+6. Additionally, a LangChain-based summary PDF will be saved as `langchain_summary.pdf` in the `output/` directory.
 
 ## Project Structure
-- `main.ipynb`: Main notebook containing the agent setup and execution code.
+- `.gitignore`: Git ignore file for excluding unnecessary files.
+- `main.ipynb`: Main notebook containing the agent setup and execution code using CrewAI and LangChain.
+- `README.md`: Project documentation.
+- `requirements.txt`: List of Python dependencies.
+- `Documentation/`: Directory for additional documentation.
 - `input/`: Directory for input PDF files.
-- `output/`: Directory where summary PDFs are saved.
+- `output/`: Directory where summary and timetable PDFs are saved.
 
 ## Contributing
 Contributions are welcome! Please open issues or submit pull requests for improvements or new features.
