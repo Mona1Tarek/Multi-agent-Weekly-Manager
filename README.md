@@ -21,7 +21,11 @@ The Multi-agent Weekly Manager is an AI-powered system designed to assist with w
 ### Dependencies
 Install required Python packages:
 ```bash
-pip install crewai python-dotenv fpdf PyPDF2
+pip install -r requirements.txt
+```
+or manually:
+```bash
+pip install crewai python-dotenv fpdf2 PyPDF2 agentops langchain langchain-core langchain-community langchain-groq
 ```
 
 ### Environment Setup
