@@ -61,15 +61,10 @@ This allows you to compare the outputs from both implementations.
 
 ## Project Structure
 ```
-.
+
 ├── main.ipynb              # Main Jupyter notebook with both CrewAI and LangChain implementations
 ├── requirements.txt        # Python package dependencies
-├── README.md              # Project documentation
-├── Documentation/         # Additional documentation and notes
-│   ├── errors.txt        # Common errors and solutions
-│   ├── hybrid_mode.txt   # Documentation for hybrid mode usage
-│   ├── newInThisProject.txt
-│   └── notes.txt
+├── README.md              # Project 
 ├── input/                # Input directory for PDF files
 │   └── sample.pdf       # Example PDF for testing
 └── output/              # Output directory for generated PDFs
