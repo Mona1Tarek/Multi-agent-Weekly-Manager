@@ -4,6 +4,9 @@ fpdf2
 PyPDF2
 agentops
 langchain
-langchain-core
-langchain-community
+langchain-classic
 langchain-groq
+langchain-google-community
+google-auth
+google-auth-oauthlib
+google-api-python-client
