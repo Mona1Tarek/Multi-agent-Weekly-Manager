@@ -18,3 +18,10 @@ __pycache__/
 
 # Documentation folder
 Documentation/
+
+# Output directory (generated files)
+output/
+
+# Google OAuth Credentials
+credentials.json
+token.json

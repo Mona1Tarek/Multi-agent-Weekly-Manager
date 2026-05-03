@@ -1,126 +1,172 @@
-# Multi-agent Weekly Manager
+# Multi-Agent Weekly Manager
 
 ## Overview
-The Multi-agent Weekly Manager is an AI-powered system designed to assist with weekly management tasks using multiple specialized agents. The system utilizes both CrewAI and LangChain frameworks to implement a robust task management solution. 
 
-The system leverages the Groq API with the Llama 3.1 language model for optimal performance and response times.
+The Multi-Agent Weekly Manager is an AI-powered productivity system built on **FastAPI**, using both **CrewAI** and **LangChain** frameworks powered by **Groq's Llama 3.1** model.
+
+---
 
 ## Features
-- **Summarizer Agent**: Processes PDF documents and generates concise summaries in PDF format, with implementations in both CrewAI and LangChain for comparison.
-- **Timetable Agent**: Creates detailed weekly schedules based on user-provided tasks and priorities, also implemented in both frameworks.
-- **Email Drafting Agent**: (Experimental) Drafts emails using Gmail API integration with LangChain.
-- Planned Agents:
-  - Calendar Agent: Manages and books meetings.
-  - Reminder Agent: Sends reminders for upcoming tasks and events.
-  - Reporting Agent: Generates weekly or daily summary reports.
+
+| Agent | Description |
+|-------|-------------|
+| **Summarizer Agent** | Reads a PDF and produces a concise written summary |
+| **Timetable Agent** | Converts a plain-text task list into a structured weekly schedule |
+| **Email Drafter** | Creates Gmail draft emails via the Gmail API |
+
+Each agent has both a **CrewAI** implementation (full agentic loop) and a **LangChain** chain (faster, suitable for API endpoints).
+
+---
+
+## Project Structure
+
+```
+Multi-agent_Weekly_Manager/
+├── agents/
+│   ├── summarizer/
+│   │   ├── agent.py        # CrewAI Agent + Task
+│   │   └── chain.py        # LangChain chain (fast)
+│   ├── timetable/
+│   │   ├── agent.py        # CrewAI Agent + Task
+│   │   └── chain.py        # LangChain chain (fast)
+│   └── email_drafter/
+│       ├── agent.py        # GmailCreateDraft tool
+│       └── schemas.py      # Pydantic input schemas
+├── core/
+│   ├── config.py           # Env vars + shared LLM initialisation
+│   ├── pdf_utils.py        # read_pdf() + save_output() helpers
+│   └── crew.py             # Full multi-agent Crew assembly
+├── api/
+│   ├── main.py             # FastAPI app entry point
+│   └── routes/
+│       ├── summarizer.py   # POST /summarize
+│       ├── timetable.py    # POST /timetable
+│       ├── email.py        # POST /email/draft
+│       └── crew.py         # POST /crew/run
+├── input/                  # Place PDF files here
+├── output/                 # Generated PDFs are saved here
+├── credentials.json        # Google OAuth credentials (user-provided)
+├── token.json              # Google OAuth token (auto-generated)
+├── .env                    # API keys (user-created)
+├── requirements.txt
+├── README.md
+└── main.py                 # Application entry point
+```
+
+---
 
 ## Installation
 
 ### Prerequisites
-- Python 3.8 or higher
-- API keys for Groq and AgentOps (stored in a `.env` file)
-- Google OAuth credentials (for Gmail integration features)
 
-### Dependencies
-Install required Python packages using pip:
+- Python 3.8+
+- API keys for Groq and (optionally) AgentOps
+- Google OAuth credentials for Gmail features
+
+### 1. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-Required packages:
-- crewai: For agent orchestration and task management
-- langchain and related packages: For alternative implementation and document processing
-- python-dotenv: For environment variable management
-- fpdf2: For PDF generation
-- PyPDF2: For PDF reading and text extraction
-- agentops: For agent operations tracking (optional)
-- langchain-groq: For Groq API integration
-- google-auth-oauthlib: For Google OAuth authentication
-- google-api-python-client: For Gmail API integration
+### 2. Create `.env` file
 
-### Environment Setup
-Create a `.env` file in the project root with the following keys:
-```
+```env
 GROQ_API_KEY=your_groq_api_key_here
 AGENTOPS_API_KEY=your_agentops_api_key_here
 ```
 
-### Gmail Integration Setup 
-For email drafting features:
-1. Create a Google Cloud project
-2. Enable the Gmail API
-3. Download OAuth 2.0 credentials and save as `credentials.json`
-4. Run the authentication flow (will create `token.json`)
+### 3. (Optional) Gmail setup
 
-## Usage
+For email drafting:
+1. Create a Google Cloud project and enable the Gmail API
+2. Download OAuth 2.0 credentials and save as `credentials.json`
+3. Run the auth flow once using the Google Auth library to generate `token.json`
 
-### Running the Agents
-1. Place the PDF documents you want to summarize in the `input/` directory (use `sample.pdf` as an example).
-2. Open `main.ipynb` in a Jupyter environment and configure your tasks in the `schedule_text` variable using the format:
-   ```python
-   schedule_text = """
-       - Task 1: Complete project report (High Priority, 2 hours)
-       - Task 2: Team meeting (Medium Priority, 1 hour)
-       - Task 3: Respond to emails (Low Priority, 30 minutes)
-   """
-   ```
-3. Run the notebook cells sequentially to execute both CrewAI and LangChain implementations.
+---
 
-### Output Files
-Output files will be generated in the `output/` directory:
-- `summary.pdf`: Document summary generated by CrewAI
-- `timetable.pdf`: Weekly schedule generated by CrewAI
-- `langchain_summary.pdf`: Alternative summary using LangChain
-- `langchain_timetable.pdf`: Alternative schedule using LangChain
+## Running the Application
 
-This allows you to compare the outputs from both implementations.
-
-
-## Project Structure
-```
-├── main.ipynb              # Main Jupyter notebook with both CrewAI and LangChain implementations
-├── requirements.txt        # Python package dependencies
-├── README.md              # Project documentation
-├── credentials.json       # Google OAuth credentials (not included, user must provide)
-├── token.json            # Google OAuth token (generated on first run)
-├── .env                  # Environment variables (not included, user must create)
-├── input/                # Input directory for PDF files
-│   └── sample.pdf       # Example PDF for testing
-└── output/              # Output directory for generated PDFs
-    ├── summary.pdf              # CrewAI summary
-    ├── timetable.pdf           # CrewAI timetable
-    ├── langchain_summary.pdf   # LangChain summary
-    └── langchain_timetable.pdf # LangChain timetable
+```bash
+python main.py
 ```
 
-## Implementation Details
+Or directly with uvicorn:
 
-### Summarizer Agent
-- Reads PDF content using PyPDF2
-- Extracts key points and main ideas
-- Generates concise summaries
-- Outputs clean, formatted PDFs without markdown artifacts
+```bash
+uvicorn api.app:app --reload --host 0.0.0.0 --port 8000
+```
 
-### Timetable Agent
-- Analyzes task priorities and durations
-- Distributes tasks across the week
-- Includes breaks and buffer time
-- Creates structured table format with columns: Day, Time Slot, Task, Duration, Priority
+Interactive docs available at:
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
 
-### Email Drafting (Experimental)
-- Integrates with Gmail API
-- Creates draft emails programmatically
-- Requires proper OAuth authentication
-- Currently in development phase
+---
+
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/health` | Health check |
+| `POST` | `/summarize/` | Upload a PDF → summary JSON + optional PDF |
+| `POST` | `/timetable/` | Send task list text → timetable JSON + optional PDF |
+| `POST` | `/email/draft` | Send email fields → creates Gmail draft |
+| `POST` | `/crew/run` | Full CrewAI multi-agent run (both agents) |
+
+### Example: Summarize a PDF
+
+```bash
+curl -X POST "http://localhost:8000/summarize/?save_pdf=true" \
+  -F "file=@input/sample.pdf"
+```
+
+### Example: Generate a timetable
+
+```bash
+curl -X POST "http://localhost:8000/timetable/?save_pdf=true" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "schedule_text": "- Task 1: Project report (High, 2h)\n- Task 2: Team meeting (Medium, 1h)"
+  }'
+```
+
+### Example: Full crew run
+
+```bash
+curl -X POST "http://localhost:8000/crew/run" \
+  -F "file=@input/sample.pdf" \
+  -F "schedule_text=- Task 1: Report (High, 2h)\n- Task 2: Meeting (Medium, 1h)"
+```
+
+### Query Parameters
+
+Both `/summarize/` and `/timetable/` accept:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `save_pdf` | `true` | Save output as PDF in `output/` |
+| `use_crewai` | `false` | Use the full CrewAI agent (slower but more thorough) |
+
+---
+
+## Output Files
+
+All PDFs are saved to the `output/` directory:
+
+| File | Generated by |
+|------|-------------|
+| `langchain_summary.pdf` | `/summarize/` (LangChain) |
+| `crewai_summary.pdf` | `/summarize/?use_crewai=true` |
+| `langchain_timetable.pdf` | `/timetable/` (LangChain) |
+| `crewai_timetable.pdf` | `/timetable/?use_crewai=true` |
+| `summary.pdf` | `/crew/run` (full crew) |
+| `timetable.pdf` | `/crew/run` (full crew) |
+
+---
 
 ## Notes
-- AgentOps integration is commented out by default but can be enabled for monitoring
-- The system handles encoding issues automatically for PDF generation
-- Both CrewAI and LangChain implementations are provided for comparison and flexibility
-- Gmail features require additional setup and may not work without proper credentials
 
-## Contributing
-Contributions are welcome! Please open issues or submit pull requests for improvements or new features.
-
-## License
-This project currently does not have a license specified.
+- The LangChain chains are faster and recommended for API integrations
+- The CrewAI agents are more thorough but take longer (full agentic loop)
+- AgentOps integration is available but disabled by default
+- Gmail OAuth setup: run the auth flow once using the Google SDK, which will create `token.json`
