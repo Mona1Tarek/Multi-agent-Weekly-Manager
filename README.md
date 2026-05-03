@@ -115,12 +115,15 @@ Interactive docs available at:
 
 ### How to Test
 
-The easiest way to test these endpoints is through the interactive **Swagger UI**.
+**1. Using Swagger UI (Quick & Easy)**
+The easiest way to quickly test these endpoints is through the interactive built-in **Swagger UI**.
 Once the server is running, simply open your browser and navigate to:
 [http://localhost:8000/docs](http://localhost:8000/docs)
 
 From there, you can click on any endpoint (like `/summarize/`), click **"Try it out"**, upload your PDF, and hit **Execute** to see the results immediately without writing any code.
 
+**2. Using Apidog (Highly Recommended)**
+For a more robust testing experience, I highly recommend using **[Apidog](https://apidog.com/)**. It is a fantastic, modern API development platform that makes it incredibly easy to send complex requests (like uploading PDFs and JSON data simultaneously), save your test cases, and manage your API workflow effortlessly!
 ### Query Parameters
 
 Both `/summarize/` and `/timetable/` accept:
