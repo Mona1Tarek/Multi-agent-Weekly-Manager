@@ -113,30 +113,13 @@ Interactive docs available at:
 | `POST` | `/email/draft` | Send email fields → creates Gmail draft |
 | `POST` | `/crew/run` | Full CrewAI multi-agent run (both agents) |
 
-### Example: Summarize a PDF
+### How to Test
 
-```bash
-curl -X POST "http://localhost:8000/summarize/?save_pdf=true" \
-  -F "file=@input/sample.pdf"
-```
+The easiest way to test these endpoints is through the interactive **Swagger UI**.
+Once the server is running, simply open your browser and navigate to:
+[http://localhost:8000/docs](http://localhost:8000/docs)
 
-### Example: Generate a timetable
-
-```bash
-curl -X POST "http://localhost:8000/timetable/?save_pdf=true" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "schedule_text": "- Task 1: Project report (High, 2h)\n- Task 2: Team meeting (Medium, 1h)"
-  }'
-```
-
-### Example: Full crew run
-
-```bash
-curl -X POST "http://localhost:8000/crew/run" \
-  -F "file=@input/sample.pdf" \
-  -F "schedule_text=- Task 1: Report (High, 2h)\n- Task 2: Meeting (Medium, 1h)"
-```
+From there, you can click on any endpoint (like `/summarize/`), click **"Try it out"**, upload your PDF, and hit **Execute** to see the results immediately without writing any code.
 
 ### Query Parameters
 
